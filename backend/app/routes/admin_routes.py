@@ -1,8 +1,48 @@
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, flash
 from app import db
-from app.models import Category, Product, Order
+from app.models import Category, Product, Order, User
+from functools import wraps
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+@bp.before_request
+def require_admin_login():
+    # Allow access to the admin login page
+    if request.endpoint and request.endpoint.startswith('admin.login'):
+        return
+    # For other admin routes, require admin session
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin.login'))
+
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    """Admin login form"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').lower().strip()
+        password = request.form.get('password', '')
+
+        user = User.query.filter_by(email=email, is_admin=True).first()
+        if user and user.check_password(password):
+            session['admin_logged_in'] = True
+            session['admin_id'] = user.id
+            session['admin_email'] = user.email
+            flash('Logged in as admin', 'success')
+            return redirect(url_for('admin.dashboard'))
+
+        flash('Invalid admin credentials', 'danger')
+
+    return render_template('admin/login.html')
+
+
+@bp.route('/logout')
+def logout():
+    session.pop('admin_logged_in', None)
+    session.pop('admin_id', None)
+    session.pop('admin_email', None)
+    flash('Logged out', 'info')
+    return redirect(url_for('admin.login'))
 
 # ==================== DASHBOARD ====================
 @bp.route('/', methods=['GET'])

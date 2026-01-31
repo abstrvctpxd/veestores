@@ -1,20 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
 from functools import wraps
+import requests
 import os
 
 auth_bp = Blueprint('auth', __name__)
 
-# Simple in-memory user storage for demo (replace with database in production)
-USERS = {}
-
-# Admin credentials (hardcoded for demo - in production use database)
-ADMIN_USER = {
-    'email': 'admin@veestores.com',
-    'password_hash': generate_password_hash('admin123'),
-    'username': 'Admin',
-    'is_admin': True
-}
+BACKEND_API = os.environ.get('BACKEND_API', 'http://localhost:5000/api')
 
 def login_required(f):
     """Decorator to require login"""
@@ -50,24 +41,27 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email', '').lower().strip()
         password = request.form.get('password', '')
-        
-        # Check admin credentials
-        if email == ADMIN_USER['email'] and check_password_hash(ADMIN_USER['password_hash'], password):
-            session['user_email'] = email
-            session['username'] = ADMIN_USER['username']
-            session['is_admin'] = True
-            flash('Welcome Admin! You are logged in.', 'success')
-            return redirect(url_for('admin.dashboard'))
-        
-        # Check user credentials
-        if email in USERS and check_password_hash(USERS[email]['password_hash'], password):
-            session['user_email'] = email
-            session['username'] = USERS[email]['username']
-            session['is_admin'] = False
-            flash(f'Welcome {USERS[email]["username"]}!', 'success')
-            return redirect(url_for('store.index'))
-        
-        flash('Invalid email or password', 'danger')
+        try:
+            resp = requests.post(f'{BACKEND_API}/auth/login', json={'email': email, 'password': password}, timeout=5)
+            data = resp.json()
+        except Exception:
+            flash('Unable to contact backend. Try again later.', 'danger')
+            return render_template('login.html')
+
+        if resp.status_code != 200:
+            flash(data.get('error', 'Invalid email or password'), 'danger')
+            return render_template('login.html')
+
+        user = data.get('user')
+        if user.get('is_admin'):
+            flash('Admin users must login via the admin panel', 'warning')
+            return redirect(f"/admin/login")
+
+        session['user_email'] = user.get('email')
+        session['username'] = user.get('username')
+        session['is_admin'] = user.get('is_admin', False)
+        flash(f"Welcome {user.get('username')}!", 'success')
+        return redirect(url_for('store.index'))
     
     return render_template('login.html')
 
@@ -97,19 +91,21 @@ def register():
             flash('Password must be at least 6 characters', 'danger')
             return redirect(url_for('auth.register'))
         
-        # Check if email already exists
-        if email in USERS or email == ADMIN_USER['email']:
-            flash('Email already registered', 'danger')
+        try:
+            resp = requests.post(f'{BACKEND_API}/auth/register', json={
+                'username': username,
+                'email': email,
+                'password': password
+            }, timeout=5)
+            data = resp.json()
+        except Exception:
+            flash('Unable to contact backend. Try again later.', 'danger')
             return redirect(url_for('auth.register'))
-        
-        # Create user
-        USERS[email] = {
-            'username': username,
-            'email': email,
-            'password_hash': generate_password_hash(password),
-            'is_admin': False
-        }
-        
+
+        if resp.status_code != 201:
+            flash(data.get('error', 'Registration failed'), 'danger')
+            return redirect(url_for('auth.register'))
+
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('auth.login'))
     

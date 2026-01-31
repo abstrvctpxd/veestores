@@ -56,31 +56,60 @@
         </div>
     </div>
     <div class="row">
-        {% for i in range(6) %}
-        <div class="col-lg-4 col-md-6 mb-4 animate-in">
-            <div class="card product-card">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/300x250/ecf0f1/2c3e50?text=Product+{{ i+1 }}" class="card-img-top" alt="Product">
-                    <span class="badge badge-new">NEW</span>
-                </div>
-                <div class="product-card-body">
-                    <h6 class="product-title">Premium Product {{ i+1 }}</h6>
-                    <div class="product-rating">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-half"></i>
-                        <small>(124 reviews)</small>
+        {% if products and products|length > 0 %}
+            {% for p in products %}
+            <div class="col-lg-4 col-md-6 mb-4 animate-in">
+                <div class="card product-card">
+                    <div class="position-relative">
+                        <img src="{{ p.image_url or 'https://via.placeholder.com/300x250/ecf0f1/2c3e50?text=' + p.name|replace(' ', '+') }}" class="card-img-top" alt="{{ p.name }}">
+                        <span class="badge badge-new">ESSENTIAL</span>
                     </div>
-                    <div class="product-price">${{ (49.99 + i*10)|round(2) }}</div>
-                    <button class="btn btn-add-cart" onclick="addToCart({{ i+1 }})">
-                        <i class="bi bi-bag-plus"></i> Add to Cart
-                    </button>
+                    <div class="product-card-body">
+                        <h6 class="product-title">{{ p.name }}</h6>
+                        <div class="product-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                            <small>(trusted suppliers)</small>
+                        </div>
+                        <div class="product-price">${{ p.price }}</div>
+                        <button class="btn btn-add-cart" onclick="addToCart({{ p.id }})">
+                            <i class="bi bi-bag-plus"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            {% set featured = ['Home Essentials','Medical Supplies','Educational Materials','Construction Tools','Household Tools','Personal Care'] %}
+            {% for item in featured %}
+            <div class="col-lg-4 col-md-6 mb-4 animate-in">
+                <div class="card product-card">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x250/ecf0f1/2c3e50?text={{ item|replace(' ', '+') }}" class="card-img-top" alt="{{ item }}">
+                        <span class="badge badge-new">ESSENTIAL</span>
+                    </div>
+                    <div class="product-card-body">
+                        <h6 class="product-title">{{ item }}</h6>
+                        <div class="product-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                            <small>(trusted suppliers)</small>
+                        </div>
+                        <div class="product-price">From $9.99</div>
+                        <button class="btn btn-add-cart" onclick="addToCart('{{ item }}')">
+                            <i class="bi bi-bag-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </section>
 
@@ -102,12 +131,24 @@
     </div>
 </section>
 
-<script>
-    function addToCart(productId) {
-        alert('Product ' + productId + ' added to cart!');
-        // Update cart badge
-        const badge = document.querySelector('.cart-badge');
-        badge.textContent = parseInt(badge.textContent) + 1;
+    <script>
+    async function addToCart(productId) {
+        try {
+            const res = await fetch('/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: productId, quantity: 1 })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                const badge = document.querySelector('.cart-badge');
+                badge.textContent = data.cart_count || 0;
+            } else {
+                alert(data.error || 'Failed to add to cart');
+            }
+        } catch (err) {
+            alert('Unable to add to cart right now');
+        }
     }
-</script>
+    </script>
 {% endblock %}

@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app import db
 from app.models import Category, Product, Order, OrderItem
+from app.models import User
+from werkzeug.security import generate_password_hash
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -159,10 +161,10 @@ def create_order():
         total_amount=0,
         status=data.get('status', 'pending')
     )
-    
+
     db.session.add(order)
     db.session.flush()
-    
+
     # Add items if provided
     items = data.get('items', [])
     total = 0
@@ -175,8 +177,20 @@ def create_order():
         )
         total += order_item.quantity * order_item.unit_price
         db.session.add(order_item)
-    
+
     order.total_amount = total
+
+    # Handle deposit/payment option: pay_deposit True means customer pays 50% now
+    pay_deposit = data.get('pay_deposit', False)
+    if pay_deposit:
+        order.deposit_amount = round(total / 2.0, 2)
+        order.deposit_paid = True
+        order.payment_status = 'deposit_paid'
+    else:
+        order.deposit_amount = 0
+        order.deposit_paid = False
+        order.payment_status = 'pending'
+
     db.session.commit()
     return jsonify(order.to_dict()), 201
 
@@ -213,3 +227,38 @@ def delete_order(id):
 def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'healthy'}), 200
+
+
+# ==================== AUTH ====================
+@bp.route('/auth/register', methods=['POST'])
+def api_register():
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+    email = (data.get('email') or '').lower().strip()
+    password = data.get('password', '')
+
+    if not username or not email or not password:
+        return jsonify({'error': 'username, email and password required'}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'Email already registered'}), 400
+
+    user = User(username=username, email=email, is_admin=False)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify(user.to_dict()), 201
+
+
+@bp.route('/auth/login', methods=['POST'])
+def api_login():
+    data = request.get_json() or {}
+    email = (data.get('email') or '').lower().strip()
+    password = data.get('password', '')
+
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
+        return jsonify({'error': 'Invalid credentials'}), 400
+
+    return jsonify({'user': user.to_dict()}), 200

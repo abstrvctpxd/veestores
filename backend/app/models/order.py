@@ -20,6 +20,9 @@ class Order(db.Model):
     customer_phone = db.Column(db.String(20))
     shipping_address = db.Column(db.Text, nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
+    deposit_amount = db.Column(db.Float, default=0)
+    deposit_paid = db.Column(db.Boolean, default=False)
+    payment_status = db.Column(db.String(50), default=OrderStatus.PENDING.value)
     status = db.Column(db.String(50), default=OrderStatus.PENDING.value)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -35,6 +38,9 @@ class Order(db.Model):
             'customer_phone': self.customer_phone,
             'shipping_address': self.shipping_address,
             'total_amount': self.total_amount,
+            'deposit_amount': self.deposit_amount,
+            'deposit_paid': self.deposit_paid,
+            'payment_status': self.payment_status,
             'status': self.status,
             'items': [item.to_dict() for item in self.items],
             'created_at': self.created_at.isoformat(),
