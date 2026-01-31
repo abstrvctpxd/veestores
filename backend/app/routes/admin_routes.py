@@ -215,6 +215,33 @@ def users():
     return render_template('admin/users.html', users=users)
 
 
+@bp.route('/users/new', methods=['GET', 'POST'])
+def create_user():
+    """Admin create new user/invite"""
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        email = (request.form.get('email') or '').lower().strip()
+        password = request.form.get('password', '').strip()
+        is_admin = request.form.get('is_admin') == 'on'
+
+        if not username or not email or not password:
+            flash('Username, email and password are required', 'danger')
+            return redirect(url_for('admin.create_user'))
+
+        if User.query.filter_by(email=email).first():
+            flash('Email already registered', 'danger')
+            return redirect(url_for('admin.users'))
+
+        user = User(username=username, email=email, is_admin=is_admin)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        flash('User created successfully', 'success')
+        return redirect(url_for('admin.users'))
+
+    return render_template('admin/user_create.html')
+
+
 @bp.route('/users/<int:id>/edit', methods=['GET', 'POST'])
 def edit_user(id):
     user = User.query.get_or_404(id)

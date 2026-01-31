@@ -53,7 +53,7 @@ pip install -r frontend/requirements.txt
 2) Start backend (defaults to SQLite). Set admin and DB as env vars if needed:
 ```
 cd backend
-set ADMIN_EMAIL=admin@veestores.com
+set ADMIN_EMAIL=veestores@outlook.com
 set ADMIN_PASSWORD=admin1234
 python run.py
 ```
@@ -65,7 +65,7 @@ python run.py
 ```
 
 Notes:
-- Admin seeded by default: admin@veestores.com / admin1234 (change via `ADMIN_EMAIL`/`ADMIN_PASSWORD`).
+- Admin seeded by default: veestores@outlook.com / admin1234 (change via `ADMIN_EMAIL`/`ADMIN_PASSWORD`).
 - Use `DATABASE_URL` to connect to PostgreSQL in production.
 - `BACKEND_API` env var lets the frontend point to a remote backend.
 - Checkout supports a 50% deposit option (pay now, rest on delivery).

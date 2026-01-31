@@ -5,3 +5,8 @@ Werkzeug==2.3.7
 click==8.1.7
 psycopg2-binary==2.9.6
 gunicorn==20.1.0
+Flask-WTF==1.1.1
+Flask-Limiter==2.10.3
+Flask-Mail==0.9.1
+stripe==6.61.0
+alembic==1.11.1

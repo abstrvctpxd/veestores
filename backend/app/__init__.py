@@ -2,8 +2,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 import os
+from flask_wtf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_mail import Mail
+import stripe
 
 db = SQLAlchemy()
+csrf = CSRFProtect()
+limiter = Limiter(key_func=get_remote_address)
+mail = Mail()
 
 def create_app(config_name='development'):
     """Create and configure Flask app"""
@@ -15,6 +23,12 @@ def create_app(config_name='development'):
 
     # Initialize extensions
     db.init_app(app)
+    csrf.init_app(app)
+    limiter.init_app(app)
+    mail.init_app(app)
+
+    # Configure Stripe if key provided
+    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 
     # Create database tables and perform safe auto-migration BEFORE importing routes
     with app.app_context():
@@ -53,7 +67,7 @@ def create_app(config_name='development'):
         from app.models import User
         from werkzeug.security import generate_password_hash
 
-        admin_email = os.environ.get('ADMIN_EMAIL', 'admin@veestores.com')
+        admin_email = os.environ.get('ADMIN_EMAIL', 'veestores@outlook.com')
         admin_password = os.environ.get('ADMIN_PASSWORD', 'admin1234')
 
         admin = User.query.filter_by(email=admin_email).first()
