@@ -5,7 +5,7 @@ services:
     repo: .
     branch: main
     buildCommand: "pip install -r backend/requirements.txt && cp start-backend.sh /usr/local/bin/start-backend.sh && chmod +x /usr/local/bin/start-backend.sh"
-    startCommand: "bash start-backend.sh"
+    startCommand: "bash ./backend/start-backend.sh"
     plan: starter
     envVars:
       - key: DATABASE_URL
@@ -37,7 +37,7 @@ services:
     repo: .
     branch: main
     buildCommand: "pip install -r frontend/requirements.txt && cp start-frontend.sh /usr/local/bin/start-frontend.sh && chmod +x /usr/local/bin/start-frontend.sh"
-    startCommand: "bash start-frontend.sh"
+    startCommand: "bash ./frontend/start-frontend.sh"
     plan: starter
     envVars:
       - key: BACKEND_API
