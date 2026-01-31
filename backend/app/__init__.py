@@ -6,7 +6,12 @@ from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_mail import Mail
-import stripe
+
+# Stripe is optional; allow builds without stripe installed (we'll use Mpesa)
+try:
+    import stripe
+except Exception:
+    stripe = None
 
 db = SQLAlchemy()
 csrf = CSRFProtect()
@@ -27,8 +32,9 @@ def create_app(config_name='development'):
     limiter.init_app(app)
     mail.init_app(app)
 
-    # Configure Stripe if key provided
-    stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
+    # Configure Stripe if available (optional)
+    if stripe is not None:
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 
     # Create database tables and perform safe auto-migration BEFORE importing routes
     with app.app_context():
