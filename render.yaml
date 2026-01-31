@@ -9,13 +9,27 @@ services:
     plan: starter
     envVars:
       - key: DATABASE_URL
-        fromDatabase: null
+        value: ""
       - key: SECRET_KEY
-        value: "__REPLACE_WITH_SECRET__"
+        value: "416100980803"
       - key: ADMIN_EMAIL
         value: "veestores@outlook.com"
       - key: ADMIN_PASSWORD
         value: "admin1234"
+      - key: STRIPE_SECRET_KEY
+        value: ""
+      - key: MAIL_SERVER
+        value: "veestore@outlook.com"
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        value: "veestores"
+      - key: MAIL_PASSWORD
+        value: "12345678qq"
+      - key: MAIL_USE_TLS
+        value: "true"
+      - key: FLASK_ENV
+        value: "production"
 
   - type: web
     name: veestores-frontend
@@ -27,4 +41,4 @@ services:
     plan: starter
     envVars:
       - key: BACKEND_API
-        value: "https://veestores-backend.onrender.com"
+        value: "https://veestoresbcknd.onrender.com"
