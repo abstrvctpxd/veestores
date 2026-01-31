@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: veestores-backend
+    env: python
+    repo: .
+    branch: main
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "gunicorn backend.run:app --bind 0.0.0.0:$PORT"
+    plan: starter
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: null
+      - key: SECRET_KEY
+        value: "__REPLACE_WITH_SECRET__"
+      - key: ADMIN_EMAIL
+        value: "veestores@outlook.com"
+      - key: ADMIN_PASSWORD
+        value: "admin1234"
+
+  - type: web
+    name: veestores-frontend
+    env: python
+    repo: .
+    branch: main
+    buildCommand: "pip install -r frontend/requirements.txt"
+    startCommand: "gunicorn frontend.run:app --bind 0.0.0.0:$PORT"
+    plan: starter
+    envVars:
+      - key: BACKEND_API
+        value: "https://veestores-backend.onrender.com"
