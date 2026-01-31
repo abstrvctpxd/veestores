@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Products - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div>
+        <h1><i class="bi bi-boxes"></i> Products</h1>
+        <small class="text-muted">Manage your product inventory</small>
+    </div>
+    <a href="/admin/products/new" class="btn btn-danger">
+        <i class="bi bi-plus-circle"></i> Add New Product
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if products %}
+                {% for product in products %}
+                <tr>
+                    <td><strong>#{{ product.id }}</strong></td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name if product.category else 'N/A' }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>
+                        {% if product.quantity > 10 %}
+                            <span class="badge bg-success">{{ product.quantity }}</span>
+                        {% elif product.quantity > 0 %}
+                            <span class="badge bg-warning text-dark">{{ product.quantity }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/admin/products/{{ product.id }}/edit" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="POST" action="/admin/products/{{ product.id }}/delete" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">
+                        No products found. <a href="/admin/products/new">Create one now</a>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Products - VeeStores{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold" style="color: #2c3e50;">Our Products</h1>
+            <p class="text-muted">Browse our extensive collection of quality items</p>
+        </div>
+    </div>
+
+    <!-- Filters Sidebar -->
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="card-title mb-0"><i class="bi bi-funnel"></i> Filters</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Price Range</label>
+                        <input type="range" class="form-range" min="0" max="1000" value="1000">
+                        <small class="text-muted">$0 - $1000</small>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Categories</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cat1" checked>
+                            <label class="form-check-label" for="cat1">Electronics</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cat2" checked>
+                            <label class="form-check-label" for="cat2">Fashion</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cat3" checked>
+                            <label class="form-check-label" for="cat3">Home & Garden</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cat4" checked>
+                            <label class="form-check-label" for="cat4">Sports</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label fw-bold">Rating</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rate5" checked>
+                            <label class="form-check-label" for="rate5">
+                                <i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i> & up
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rate4" checked>
+                            <label class="form-check-label" for="rate4">
+                                <i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i><i class="bi bi-star-fill text-warning"></i> & up
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Sort by:</label>
+                    <select class="form-select">
+                        <option selected>Newest</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Most Popular</option>
+                        <option>Top Rated</option>
+                    </select>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted">Showing <strong>12</strong> products</small>
+                </div>
+            </div>
+
+            <div class="row">
+                {% if products %}
+                    {% for product in products %}
+                    <div class="col-lg-4 col-md-6 mb-4 animate-in">
+                        <div class="card product-card">
+                            <div class="position-relative">
+                                <img src="{{ product.image_url or 'https://via.placeholder.com/300x250/ecf0f1/2c3e50?text=' + product.name[:15] }}" class="card-img-top" alt="{{ product.name }}">
+                                {% if product.quantity > 0 %}
+                                    <span class="badge badge-new">IN STOCK</span>
+                                {% else %}
+                                    <span class="badge bg-danger" style="position: absolute; top: 10px; right: 10px; padding: 0.5rem 1rem; border-radius: 5px;">OUT OF STOCK</span>
+                                {% endif %}
+                            </div>
+                            <div class="product-card-body">
+                                <h6 class="product-title">{{ product.name }}</h6>
+                                <small class="text-muted">{{ product.category_name or 'Uncategorized' }}</small>
+                                <div class="product-rating mt-2">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
+                                    <small>(85 reviews)</small>
+                                </div>
+                                <div class="product-price">${{ product.price }}</div>
+                                {% if product.quantity > 0 %}
+                                    <button class="btn btn-add-cart" onclick="addToCart('{{ product.name }}', {{ product.price }})">
+                                        <i class="bi bi-bag-plus"></i> Add to Cart
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-secondary w-100" disabled>
+                                        Out of Stock
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle"></i> No products found. Please check back later!
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            {% if products %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function addToCart(productName, price) {
+        alert(productName + ' ($' + price + ') added to cart!');
+        const badge = document.querySelector('.cart-badge');
+        badge.textContent = parseInt(badge.textContent) + 1;
+    }
+</script>
+{% endblock %}

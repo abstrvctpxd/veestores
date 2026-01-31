@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Home - VeeStores{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to VeeStores</h1>
+        <p>Discover amazing products at incredible prices</p>
+        <a href="/products" class="btn btn-primary btn-lg">
+            <i class="bi bi-shop"></i> Start Shopping
+        </a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-md-4 text-center mb-4 animate-in">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <i class="bi bi-truck" style="font-size: 2rem; color: #e74c3c;"></i>
+                    <h5 class="card-title mt-3">Free Shipping</h5>
+                    <p class="card-text">On orders over $50. Fast and reliable delivery.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4 animate-in">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <i class="bi bi-shield-check" style="font-size: 2rem; color: #27ae60;"></i>
+                    <h5 class="card-title mt-3">Secure Shopping</h5>
+                    <p class="card-text">100% secure payments and buyer protection.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4 animate-in">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <i class="bi bi-arrow-counterclockwise" style="font-size: 2rem; color: #3498db;"></i>
+                    <h5 class="card-title mt-3">Easy Returns</h5>
+                    <p class="card-text">30-day return policy on all items.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="display-5 fw-bold" style="color: #2c3e50;">Featured Products</h2>
+            <p class="text-muted">Check out our best-selling items</p>
+        </div>
+    </div>
+    <div class="row">
+        {% for i in range(6) %}
+        <div class="col-lg-4 col-md-6 mb-4 animate-in">
+            <div class="card product-card">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/300x250/ecf0f1/2c3e50?text=Product+{{ i+1 }}" class="card-img-top" alt="Product">
+                    <span class="badge badge-new">NEW</span>
+                </div>
+                <div class="product-card-body">
+                    <h6 class="product-title">Premium Product {{ i+1 }}</h6>
+                    <div class="product-rating">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                        <small>(124 reviews)</small>
+                    </div>
+                    <div class="product-price">${{ (49.99 + i*10)|round(2) }}</div>
+                    <button class="btn btn-add-cart" onclick="addToCart({{ i+1 }})">
+                        <i class="bi bi-bag-plus"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="bg-light py-5 my-5">
+    <div class="container text-center">
+        <h3 class="mb-3">Subscribe to Our Newsletter</h3>
+        <p class="text-muted mb-4">Get exclusive deals and updates delivered to your inbox</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="input-group">
+                    <input type="email" class="form-control" placeholder="Enter your email" required>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="bi bi-envelope"></i> Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function addToCart(productId) {
+        alert('Product ' + productId + ' added to cart!');
+        // Update cart badge
+        const badge = document.querySelector('.cart-badge');
+        badge.textContent = parseInt(badge.textContent) + 1;
+    }
+</script>
+{% endblock %}
