@@ -5,7 +5,7 @@ services:
     repo: .
     branch: main
     buildCommand: "pip install -r backend/requirements.txt"
-    startCommand: "gunicorn run:app --chdir backend --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn backend.run:app --bind 0.0.0.0:$PORT --pythonpath ."
     plan: starter
     envVars:
       - key: DATABASE_URL
@@ -37,7 +37,7 @@ services:
     repo: .
     branch: main
     buildCommand: "pip install -r frontend/requirements.txt"
-    startCommand: "gunicorn run:app --chdir frontend --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn frontend.run:app --bind 0.0.0.0:$PORT --pythonpath ."
     plan: starter
     envVars:
       - key: BACKEND_API
