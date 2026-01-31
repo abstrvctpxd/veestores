@@ -262,3 +262,23 @@ def api_login():
         return jsonify({'error': 'Invalid credentials'}), 400
 
     return jsonify({'user': user.to_dict()}), 200
+
+
+# ==================== USERS (password change) ====================
+@bp.route('/users/change_password', methods=['POST'])
+def change_password():
+    data = request.get_json() or {}
+    email = (data.get('email') or '').lower().strip()
+    old_password = data.get('old_password', '')
+    new_password = data.get('new_password', '')
+
+    if not email or not old_password or not new_password:
+        return jsonify({'error': 'email, old_password and new_password are required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(old_password):
+        return jsonify({'error': 'Invalid credentials'}), 400
+
+    user.set_password(new_password)
+    db.session.commit()
+    return jsonify({'message': 'Password updated'}), 200

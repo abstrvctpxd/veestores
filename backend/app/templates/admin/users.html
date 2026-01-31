@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Users - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Users</h1>
+    <a href="/admin/" class="btn btn-outline-secondary">Back</a>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        {% if users %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Admin</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
+                    <td>{{ u.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="/admin/users/{{ u.id }}/edit" class="btn btn-sm btn-primary">Edit</a>
+                        <form method="POST" action="/admin/users/{{ u.id }}/delete" style="display:inline;" onsubmit="return confirm('Delete user?');">
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No users found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

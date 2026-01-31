@@ -205,3 +205,40 @@ def delete_order(id):
     db.session.commit()
     
     return redirect(url_for('admin.orders'))
+
+
+# ==================== USERS (ADMIN MANAGEMENT) ====================
+@bp.route('/users', methods=['GET'])
+def users():
+    """List all users for admin management"""
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template('admin/users.html', users=users)
+
+
+@bp.route('/users/<int:id>/edit', methods=['GET', 'POST'])
+def edit_user(id):
+    user = User.query.get_or_404(id)
+
+    if request.method == 'POST':
+        user.username = request.form.get('username', user.username)
+        # toggle admin
+        user.is_admin = request.form.get('is_admin') == 'on'
+
+        new_password = request.form.get('new_password', '').strip()
+        if new_password:
+            user.set_password(new_password)
+
+        db.session.commit()
+        flash('User updated successfully', 'success')
+        return redirect(url_for('admin.users'))
+
+    return render_template('admin/user_form.html', user=user)
+
+
+@bp.route('/users/<int:id>/delete', methods=['POST'])
+def delete_user(id):
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted', 'info')
+    return redirect(url_for('admin.users'))
