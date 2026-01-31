@@ -327,6 +327,32 @@
                             <span class="cart-badge">0</span>
                         </a>
                     </li>
+                    {% if session.get('user_email') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session.get('username', 'User') }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="userMenu">
+                            {% if session.get('is_admin') %}
+                            <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear"></i> Admin Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light btn-sm" href="/login">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger btn-sm ms-2" href="/register">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -345,10 +371,10 @@
                     <h5>About VeeStores</h5>
                     <p>Your one-stop shop for quality products at unbeatable prices.</p>
                     <div class="social-icons">
-                        <a href="#"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-twitter"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="https://www.facebook.com/Mistvr.Veyda" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/veydaszn" target="_blank" title="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://instagram.com/veydaszn" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://linkedin.com/in/veydaszn" target="_blank" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
                     </div>
                 </div>
                 <div class="col-md-3 footer-section">
@@ -371,9 +397,9 @@
                 </div>
                 <div class="col-md-3 footer-section">
                     <h5>Contact Info</h5>
-                    <p><i class="bi bi-telephone"></i> +1 (555) 123-4567</p>
-                    <p><i class="bi bi-envelope"></i> support@veestores.com</p>
-                    <p><i class="bi bi-geo-alt"></i> 123 Commerce St, City, ST 12345</p>
+                    <p><i class="bi bi-telephone"></i> <a href="tel:+254108304306" style="color: rgba(255,255,255,0.8); text-decoration: none;">+254 108 304 306</a></p>
+                    <p><i class="bi bi-envelope"></i> <a href="mailto:veydaszn@gmail.com" style="color: rgba(255,255,255,0.8); text-decoration: none;">veydaszn@gmail.com</a></p>
+                    <p><i class="bi bi-geo-alt"></i> Ruiru, Kiambu 00232 Kenya</p>
                 </div>
             </div>
             <div class="footer-bottom">

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - VeeStores{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div style="background: white; border-radius: 10px; padding: 3rem; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+                <h2 class="mb-4 fw-bold" style="color: #2c3e50;">
+                    <i class="bi bi-person-circle"></i> My Profile
+                </h2>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Username</h6>
+                                <p class="card-text fw-bold" style="color: #2c3e50;">{{ username }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Email Address</h6>
+                                <p class="card-text fw-bold" style="color: #2c3e50;">{{ email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if is_admin %}
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-shield-check"></i> <strong>Admin Status:</strong> You have admin privileges
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <a href="/admin/" class="btn btn-primary w-100">
+                            <i class="bi bi-gear"></i> Go to Admin Dashboard
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/admin/products" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-box"></i> Manage Products
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i> You are logged in as a regular customer.
+                </div>
+                {% endif %}
+
+                <hr class="my-4">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="/" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-left"></i> Back to Store
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="/logout" class="btn btn-danger w-100">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
