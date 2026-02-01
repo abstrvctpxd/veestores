@@ -7,7 +7,7 @@ services:
     branch: main
     buildCommand: "pip install -r backend/requirements.txt"
     # Use gunicorn directly to avoid missing script issues
-    startCommand: "gunicorn veestores_django.wsgi:application --bind 0.0.0.0:$PORT --pythonpath backend"
+    startCommand: "python backend/manage.py migrate --noinput && python backend/create_admin.py && gunicorn veestores_django.wsgi:application --bind 0.0.0.0:$PORT --pythonpath backend"
     plan: starter
     envVars:
       - key: DATABASE_URL
