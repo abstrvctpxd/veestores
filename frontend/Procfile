@@ -1,1 +1,2 @@
+web: gunicorn veestores_frontend.wsgi:application --pythonpath frontend --bind 0.0.0.0:$PORT
 web: gunicorn frontend.run:app --bind 0.0.0.0:$PORT --pythonpath .
