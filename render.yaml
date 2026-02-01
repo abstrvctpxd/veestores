@@ -40,7 +40,8 @@ services:
     repo: .
     branch: main
     buildCommand: "pip install -r frontend/requirements.txt && cp start-frontend.sh /usr/local/bin/start-frontend.sh && chmod +x /usr/local/bin/start-frontend.sh"
-    startCommand: "bash ./frontend/start-frontend.sh"
+    # Start gunicorn with `run:app` and add the `frontend` folder to PYTHONPATH
+    startCommand: "gunicorn run:app --bind 0.0.0.0:$PORT --pythonpath frontend"
     plan: starter
     envVars:
       - key: BACKEND_API
