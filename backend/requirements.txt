@@ -1,3 +1,8 @@
+Django==4.2.8
+gunicorn==20.1.0
+psycopg2-binary==2.9.6
+dj-database-url==1.0.0
+whitenoise==6.5.0
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
 # Use newer SQLAlchemy that is compatible with Python 3.13
