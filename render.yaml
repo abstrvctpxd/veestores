@@ -45,4 +45,4 @@ services:
     plan: starter
     envVars:
       - key: BACKEND_API
-        value: "https://veestoresbcknd.onrender.com"
+        value: "veestoresbcknd.onrender.com"
