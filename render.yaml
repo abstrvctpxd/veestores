@@ -39,9 +39,9 @@ services:
     runtime: python-3.11.16
     repo: .
     branch: main
-    buildCommand: "pip install -r frontend/requirements.txt && chmod +x frontend/start-frontend.sh"
-    # Run the frontend start script which cds into the frontend folder
-    startCommand: "bash ./frontend/start-frontend.sh"
+    buildCommand: "pip install -r frontend/requirements.txt"
+    # Run gunicorn and change working dir to `frontend` so imports resolve
+    startCommand: "gunicorn run:app --chdir frontend --bind 0.0.0.0:$PORT"
     plan: starter
     envVars:
       - key: BACKEND_API
