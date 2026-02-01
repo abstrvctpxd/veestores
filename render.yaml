@@ -2,6 +2,7 @@ services:
   - type: web
     name: veestores-backend
     env: python
+    runtime: python-3.11.16
     repo: .
     branch: main
     buildCommand: "pip install -r backend/requirements.txt && cp start-backend.sh /usr/local/bin/start-backend.sh && chmod +x /usr/local/bin/start-backend.sh"
@@ -34,6 +35,7 @@ services:
   - type: web
     name: veestores-frontend
     env: python
+    runtime: python-3.11.16
     repo: .
     branch: main
     buildCommand: "pip install -r frontend/requirements.txt && cp start-frontend.sh /usr/local/bin/start-frontend.sh && chmod +x /usr/local/bin/start-frontend.sh"
